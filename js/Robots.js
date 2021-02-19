@@ -7,4 +7,5 @@ class Robots {
         this.vx = vx 
         this.vy = vy
     }
+    
 }
