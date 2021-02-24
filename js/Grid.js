@@ -11,6 +11,7 @@ class Grid {
         this.canvas = document.getElementById(canvasId)
         this.context = this.canvas.getContext('2d')
 
+
         this.addBots()
         window.requestAnimationFrame((timeStamp) => { this.gridLoop(timeStamp) })
     }
@@ -18,21 +19,23 @@ class Grid {
     addBots() {
         this.bots = [
             // reminder (context, x-coordinate, y-coordinate, x-velocity, y-volocity)
-            new Bot(this.context, 0, 275, 200, 0),
-            new Bot(this.context, 475, 0, 0, 150)
+            new Bot(this.context, 0, 290),
+            // new Bot(this.context, 475, 0, 0, 100)
         ]
     }
     gridLoop(timeStamp) {
+        // console.log('this is the time stamp being fed: ', timeStamp)
         let deltaTime = (timeStamp - this.initialTime) / 1000;
         this.initialTime = timeStamp
+        // console.log('timestamp: ', timeStamp/ 1000)
         for (let i = 0; i < this.bots.length; i++) {
             this.bots[i].motion(deltaTime, this.canvas.width, this.canvas.height)
+            // this.bots[i].motion(timeStamp / 1000, this.canvas.width, this.canvas.height)
         }
-        this.collision()
+        // this.collision()
         this.clear()
         for(let i =0; i < this.bots.length; i++) {
             this.bots[i].draw()
-            this.bots[i].drawLines()
         }
 
 
