@@ -5,64 +5,114 @@ class Bot extends Robots {
 
         this.width = 25
         this.height = 20
-        this.minVelocity = 100
-        this.maxVelocity = 225
-        this.accel = 125
-        this.initalVx = 0
+        this.maxVelocity = 250
+        this.accel = 5
+        this.initialVx = 0
         this.finalVx = 0
-        this.initalVy = 0
-        this.finalVy = 0
+
+        this.right = true
+        // this.initialVy = 0
+        // this.finalVy = 0
+
+        // the angle that will be used for rotation. 
+        this.angle = 0
+
+
+
     }
     // method that draws the object on to the canvas
     draw() {
+
+        // this.context.save()
+        // this.context.translate(this.x, this.y)
+        // this.context.rotate(this.angle)
         this.context.fillStyle = 'black'
         this.context.fillRect(this.x, this.y, this.width, this.height)
-    }
-    motion(time, canvasWidth, canvasHeight) {
-        // if (this.x < 0 || this.x > canvasWidth - this.width) {
-        //     console.log('reached the edge: ')
-        //     this.vx = -this.vx
+        // this.context.restore()
 
-        // }
-        // if (this.y < 0 || this.y > canvasHeight - this.height) {
-        //     this.vy = -this.vy
-        // }
-        // this.x += this.vx * deltaTime
-        // this.y += this.vy * deltaTime
-        // console.log('position x: ', this.x)
-        // // this.x += this.vx * deltaTime + .5 * (.0000000000000001) * deltaTime * deltaTime
-        // // this.y += this.vy * deltaTime + .5 * (.0000000000000001) * deltaTime * deltaTime
-    
-        if (this.initalVx < this.maxVelocity) {
-            this.acceleration(time)
+    }
+    motion(time, width, height) {
+        if (this.initialVx > this.maxVelocity) {
+            this.accelerate(time, 'slowDown')
         }
-        this.velocity(time, canvasWidth, canvasHeight)
 
-    }
-    acceleration(time) {
-        this.x += this.initalVx * time + .5 * this.accel * time * time
-        // this.y += this.initalVx * time + .5 * this.acceleration * time * time
-
-        this.finalVx = this.initalVx + this.accel * time
-        // this.finalVy = this.initalVy + this.acceleration * time
-
-        this.initalVx = this.finalVx
-        // this.initalVy = this.finalVy
-    }
-    velocity(time, width, height) {
-        console.log('position: ', this.x)
-        console.log('width: ', height)
-        if (this.x < 0 || this.x > width - this.width) {
-            this.finalVx = -this.finalVx
+        else {
+            this.accelerate(time, 'speedUp')
         }
-        if (this.y < 0 || this.y > height - this.height) {
-            this.finalVy = -this.finalVy
+
+        if (this.x >= 0 && this.x < width - this.width && this.right) {
+            this.speed(time, 'west')
+        } else if (this.x < 0) {
+            this.speed(time, 'west')
+        }
+        else {
+            this.speed(time, 'east')
+        }
+    }
+    // will set the motion of the bot based on the time stamp that is being provided. will also verify if it has reached the edge of the canvas.
+    speed(time, direction) {
+        switch (direction) {
+            case 'west':
+                this.finalVx = this.finalVx
+                this.right = true
+                break
+            case 'east':
+                this.finalVx = -this.finalVx
+                this.right = false
+                break
+            default:
+                return
         }
         this.x += this.finalVx * time
-        this.y += this.finalVy * time
+        // checks if the bot reached the the edge of the board width wise if so, make the velocity negative to make it move the opposite direction
+        // if (this.x < 0 || this.x > width - this.width) {
+        //     this.finalVx = -this.finalVx
+        // }
+        // if (this.y < 0 || this.y > height - this.height) {
+        //     this.finalVy = -this.finalVy
+        // }
+        // this is added to the position of the bot 
+        // this.x += this.finalVx * time
+        // this.y += this.finalVy * time
     }
-    turn() {
-        this.context.rotate(180 * Math.PI / 180)
-        console.log('reached rotate method: ')
+    // will be used to increase the velocity or decrease base on the location of the bot relative to the board, and later other bots
+    accelerate(time, action) {
+        switch (action) {
+            case 'speedUp':
+                this.finalVx = this.initialVx + this.accel * time
+                break
+            case 'slowDown':
+                this.finalVx = this.initialVx - this.accel * time
+                break
+            default:
+                return
+        }
+
+        this.initialVx = this.finalVx
+        // this.finalVx = this.initialVx + this.accel * time
+        // this.initialVx = this.finalVx
+
+
+        // this.finalVy = this.initialVy + this.accel * time
+        // this.initialVy = this.finalVy
+    }
+    // will be used to rotate the bot, either north, west, south, east
+    turn(direction) {
+        switch (direction) {
+            case 'north':
+                this.angle = 270
+                break
+            case 'west':
+                this.angle = 0
+                break
+            case 'south':
+                this.angle = 90
+                break
+            case 'east':
+                this.angle = 180
+                break
+            default:
+                return
+        }
     }
 }
