@@ -5,8 +5,8 @@ class Bot extends Robots {
 
         this.width = 25
         this.height = 20
-        this.maxVelocity = 250
-        this.accel = 5
+        this.maxVelocity = 200
+        this.accel = 50
         this.initialVx = 0
         this.finalVx = 0
 
@@ -32,12 +32,20 @@ class Bot extends Robots {
 
     }
     motion(time, width, height) {
-        if (this.initialVx > this.maxVelocity) {
+        if ( this.initialVx < this.maxVelocity) {
+            if (this.x >= 0 && this.right && this.x < 600) {
+                this.accelerate(time, 'speedUp')
+            } else if (this.right && this.x >= 600) {
+                this.accelerate(time, 'slowDown')
+            } else if (!this.right && this.x >= 400) {
+                this.accelerate(time, 'speedUp')
+            } else if (!this.right && this.x < 400) {
+                this.accelerate(time, 'slowDown')
+            } else {
+                console.log('error')
+            }
+        } else {
             this.accelerate(time, 'slowDown')
-        }
-
-        else {
-            this.accelerate(time, 'speedUp')
         }
 
         if (this.x >= 0 && this.x < width - this.width && this.right) {
@@ -64,22 +72,14 @@ class Bot extends Robots {
                 return
         }
         this.x += this.finalVx * time
-        // checks if the bot reached the the edge of the board width wise if so, make the velocity negative to make it move the opposite direction
-        // if (this.x < 0 || this.x > width - this.width) {
-        //     this.finalVx = -this.finalVx
-        // }
-        // if (this.y < 0 || this.y > height - this.height) {
-        //     this.finalVy = -this.finalVy
-        // }
-        // this is added to the position of the bot 
-        // this.x += this.finalVx * time
-        // this.y += this.finalVy * time
+
     }
     // will be used to increase the velocity or decrease base on the location of the bot relative to the board, and later other bots
     accelerate(time, action) {
         switch (action) {
             case 'speedUp':
                 this.finalVx = this.initialVx + this.accel * time
+
                 break
             case 'slowDown':
                 this.finalVx = this.initialVx - this.accel * time
@@ -89,12 +89,7 @@ class Bot extends Robots {
         }
 
         this.initialVx = this.finalVx
-        // this.finalVx = this.initialVx + this.accel * time
-        // this.initialVx = this.finalVx
 
-
-        // this.finalVy = this.initialVy + this.accel * time
-        // this.initialVy = this.finalVy
     }
     // will be used to rotate the bot, either north, west, south, east
     turn(direction) {
